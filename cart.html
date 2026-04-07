@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            color: #fff;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 0 20px;
+        }
+
+        header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, #f7971e, #ffd200);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
+        }
+
+        header p {
+            color: rgba(255,255,255,0.5);
+            font-size: 0.9rem;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .empty-state .icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+            animation: bounce 2s infinite;
+        }
+
+        .empty-state h2 {
+            font-size: 1.3rem;
+            color: rgba(255,255,255,0.7);
+            font-weight: 500;
+        }
+
+
+        /* Cart Card */
+        .cart-card {
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            animation: slideUp 0.4s ease both;
+        }
+
+        .cart-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+            border-color: rgba(255,255,255,0.2);
+        }
+
+        .cart-card img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .cart-card .info {
+            flex: 1;
+        }
+
+        .cart-card .info h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .cart-card .info .price {
+            font-size: 1.1rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, #f7971e, #ffd200);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Quantity Controls */
+        .qty-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 10px;
+            padding: 4px 8px;
+        }
+
+        .qty-box button {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.12);
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .qty-box button:hover {
+            background: rgba(247, 151, 30, 0.5);
+            transform: scale(1.1);
+        }
+
+        .qty-box span {
+            font-weight: 600;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        /* Remove Button */
+        .remove-btn {
+            background: rgba(255, 71, 87, 0.15);
+            border: 1px solid rgba(255, 71, 87, 0.3);
+            color: #ff6b81;
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .remove-btn:hover {
+            background: rgba(255, 71, 87, 0.35);
+            transform: scale(1.05);
+        }
+
+        /* Total Bar */
+        .total-bar {
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 16px;
+            padding: 20px 24px;
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .total-bar .label {
+            font-size: 1rem;
+            color: rgba(255,255,255,0.6);
+            font-weight: 500;
+        }
+
+        .total-bar .amount {
+            font-size: 1.6rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, #f7971e, #ffd200);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            margin-top: 14px;
+            padding: 16px;
+            border: none;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #f7971e, #ffd200);
+            color: #1a1a2e;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            letter-spacing: 0.5px;
+        }
+
+        .checkout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(247, 151, 30, 0.4);
+        }
+
+        .checkout-btn:active {
+            transform: scale(0.98);
+        }
+
+        .item-count {
+            background: rgba(247, 151, 30, 0.2);
+            color: #ffd200;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Responsive */
+        @media (max-width: 500px) {
+            .cart-card {
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+            .cart-card .actions {
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>🛍️ Your Cart</h1>
+            <p id="item-count-text"></p>
+        </header>
+
+        <div id="empty-state" class="empty-state" style="display:none;">
+            <div class="icon">🛒</div>
+            <h2>Your cart is empty</h2>
+            <p style="color:rgba(255,255,255,0.4); margin-top:8px;">Add some items to get started</p>
+        </div>
+
+        <div id="cart-items"></div>
+
+        <div id="total-section" style="display:none;">
+            <div class="total-bar">
+                <span class="label">Total</span>
+                <span class="amount">₹<span id="total">0</span></span>
+            </div>
+            <button class="checkout-btn" onclick="alert('🎉 Checkout coming soon!')">Proceed to Checkout →</button>
+        </div>
+    </div>
+
+    <script>
+        let cart = JSON.parse(localStorage.getItem("cartItems")) || [];
+
+        function saveCart() {
+            localStorage.setItem("cartItems", JSON.stringify(cart));
+        }
+
+
+        function displayCart() {
+            let cartItemsDiv = document.getElementById("cart-items");
+            let emptyState = document.getElementById("empty-state");
+            let totalSection = document.getElementById("total-section");
+            let countText = document.getElementById("item-count-text");
+            cartItemsDiv.innerHTML = "";
+
+            if (cart.length === 0) {
+                emptyState.style.display = "block";
+                totalSection.style.display = "none";
+                countText.textContent = "";
+                return;
+            }
+
+            emptyState.style.display = "none";
+            totalSection.style.display = "block";
+
+            let total = 0;
+            let totalQty = 0;
+
+            cart.forEach((item, index) => {
+                total += item.price * item.quantity;
+                totalQty += item.quantity;
+
+                let card = document.createElement("div");
+                card.className = "cart-card";
+                card.style.animationDelay = (index * 0.08) + "s";
+                card.innerHTML = `
+                    <img src="${item.img}" alt="${item.name}" onerror="this.style.display='none'">
+                    <div class="info">
+                        <h3>${item.name}</h3>
+                        <span class="price">₹${(item.price * item.quantity).toLocaleString()}</span>
+                    </div>
+                    <div class="qty-box">
+                        <button onclick="decreaseQty(${index})">−</button>
+                        <span>${item.quantity}</span>
+                        <button onclick="increaseQty(${index})">+</button>
+                    </div>
+                    <button class="remove-btn" onclick="removeItem(${index})">✕</button>
+                `;
+                cartItemsDiv.appendChild(card);
+            });
+
+            document.getElementById("total").innerText = total.toLocaleString();
+            countText.innerHTML = `<span class="item-count">${totalQty} item${totalQty > 1 ? 's' : ''}</span>`;
+        }
+
+        function increaseQty(i) {
+            cart[i].quantity++;
+            saveCart();
+            displayCart();
+        }
+
+        function decreaseQty(i) {
+            if (cart[i].quantity > 1) {
+                cart[i].quantity--;
+            } else {
+                cart.splice(i, 1);
+            }
+            saveCart();
+            displayCart();
+        }
+
+        function removeItem(i) {
+            cart.splice(i, 1);
+            saveCart();
+            displayCart();
+        }
+
+        displayCart();
+    </script>
+</body>
+</html>
