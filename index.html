@@ -25,6 +25,11 @@
     <div></div>
     <div></div>
   </div>
+    <div class="nav-right">
+        <a href="cart.html" class="cart-icon">
+            🛒 <span id="cart-count">0</span>
+        </a>
+    </div>
             </nav>
             <section class="banner" id="banner">
                 <div class="box">
@@ -53,7 +58,7 @@
         <div class="stars">★★★★★</div>
         <div class="price-row">
             <p class="price">$49.99</p>
-            <button>Add to Cart</button>
+            <button onclick="addToCart(1, 'Emgraved Keepsake Box', 49.99, 'img (1).jpg')">Add to Cart</button>
         </div>
     </div>
     
@@ -64,7 +69,7 @@
         <div class="stars">★★★★★</div>
         <div class="price-row">
             <p class="price">$89.99</p>
-            <button>Add to Cart</button>
+            <button onclick="addToCart(2, 'Executive Leather Set', 89.99, 'img (2).jpg')">Add to Cart</button>
         </div>
     </div>
     
@@ -75,7 +80,7 @@
         <div class="stars">★★★★★</div>
         <div class="price-row">
             <p class="price">$34.99</p>
-            <button>Add to Cart</button>
+            <button onclick="addToCart(3, 'Artisan Ceramic Plate', 34.99, 'img (3).jpg')">Add to Cart</button>
         </div>
     </div>
     
@@ -86,7 +91,7 @@
         <div class="stars">★★★★★</div>
         <div class="price-row">
             <p class="price">$34.99</p>
-            <button>Add to Cart</button>
+            <button onclick="addToCart(4, 'Artisan Ceramic Plate', 34.99, 'img (4).jpg')">Add to Cart</button>
         </div>
     </div>
     
@@ -98,7 +103,7 @@
         <div class="stars">★★★★★</div>
         <div class="price-row">
             <p class="price">$34.99</p>
-            <button>Add to Cart</button>
+            <button onclick="addToCart(5, 'Artisan Ceramic Plate', 34.99, 'img (5).jpg')">Add to Cart</button>
         </div>
     </div>
 
@@ -287,6 +292,51 @@
 <script>
 function toggleMenu(){
   document.getElementById("options").classList.toggle("show");
+}
+</script>
+
+<script>
+    let cart = [];
+    function addToCart(id, name, price, img) {
+    // Check if item already exists
+    let existing = cart.find(item => item.id === id);
+
+    if (existing) {
+        existing.quantity += 1;
+    } else {
+        cart.push({
+            id,
+            name,
+            price,
+            img,
+            quantity: 1
+        });
+    }
+
+    saveCart();
+    alert(name + " added to cart!");
+}
+function saveCart() {
+    localStorage.setItem("cartItems", JSON.stringify(cart));
+}
+cart = JSON.parse(localStorage.getItem("cartItems")) || [];
+function updateCartCount() {
+    let count = cart.reduce((sum, item) => sum + item.quantity, 0);
+    document.getElementById("cart-count").innerText = count;
+}
+
+updateCartCount();
+function addToCart(id, name, price, img) {
+    let existing = cart.find(item => item.id === id);
+
+    if (existing) {
+        existing.quantity += 1;
+    } else {
+        cart.push({ id, name, price, img, quantity: 1 });
+    }
+
+    saveCart();
+    updateCartCount();  // 👈 update number on cart icon
 }
 </script>
 
